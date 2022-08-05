@@ -1,13 +1,14 @@
 [package]
-name = "nightcycle/package"
-description = "A package!"
-version = "4.0.0"
+name = "nightcycle/node"
+description = "A framework useful for creating hierarchical node networks, as well as performing wave function collapse style procedural generation."
+version = "1.0.0"
 authors = ["CJ Oyer <coyer@nightcycle.us>"]
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
 exclude = ["Packages", ".vscode"]
 
 [dependencies]
-coldfusion = "nightcycle/cold-fusion@1.0.0"
-signal = "quenty/signal@^2.0.0-canary"
-maid = "quenty/maid@^2.0.1-canary"
+Signal = "nightcycle/signal@^1.0.0"
+Maid = "nightcycle/maid@^1.0.2"
+Math = "nightcycle/luau-math@1.1.1"
+

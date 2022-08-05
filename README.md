@@ -1,2 +1,2 @@
-# package
-A basic template for whenever I make a wally package
+# node
+A framework useful for creating hierarchical node networks, as well as performing wave function collapse style procedural generation.
