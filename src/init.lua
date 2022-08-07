@@ -1,7 +1,7 @@
 --!strict
 local _packages = script.Parent
 local _package = script
-local _require = require(script.Require)
+local _require = require(script:WaitForChild("Require"))
 
 local HttpService = game:GetService("HttpService")
 local CollectionService = game:GetService("CollectionService")
@@ -19,7 +19,12 @@ NodeUtil.BackendTagPrefix = "_NODETAG_"
 --- @within NodeUtil
 --- to avoid overlapping with front-end tags, all tags are appended on the backend with a tag prefix
 
-export type Node = Model
+export type Node = Model & {
+	GetAttribute: 
+		((self: Node, key: "Position") -> Vector3) 
+		& ((self: Node, key: "GenerationIndex") -> number)
+		,	
+}
 
 --- @type Node Model
 --- @within NodeUtil
@@ -30,12 +35,12 @@ type SolverConnection = ObjectValue
 
 --get node generation
 function _getNodeGeneration(node: Node): number
-	return node:GetAttribute("_GenerationIndex") or 0
+	return node:GetAttribute("GenerationIndex") or 0
 end
 
 --set node generation
 function _setNodeGeneration(node: Node, number: number): nil
-	node:SetAttribute("_GenerationIndex", number)
+	node:SetAttribute("GenerationIndex", number)
 	return nil
 end
 
@@ -167,7 +172,6 @@ function _getOutputSolver(node: Node, key: string): ((node: Node) -> any?)
 	solver = solver :: ((node: Node) -> any?)
 	return solver
 end
-
 
 -- converts to a raw tag
 function _toRawTag(tag: string): string
@@ -306,7 +310,8 @@ function NodeUtil.getConnectedNodes(node: Node): {[number]: Node}
 		local otherNode: Instance? = connection.Value
 		if otherNode ~= nil then
 			assert(otherNode:IsA("Model"))
-			table.insert(nodes, otherNode)
+			local insertNode: any = otherNode
+			table.insert(nodes, insertNode)
 		end
 	end
 	return nodes
@@ -334,7 +339,7 @@ end
 
 --- Get the value of non-solver properties
 function NodeUtil.getInputValue(node: Node, key: string): any?
-	return node:SetAttribute(key)
+	return node:GetAttribute(key)
 end
 
 --- Set a module to be used for future solving of the value
@@ -358,7 +363,7 @@ end
 
 --- Gets the position of a node
 function NodeUtil.getNodePosition(node: Node): Vector3
-	local val: any? = node:SetAttribute("Position")
+	local val: any? = node:GetAttribute("Position")
 	assert(val ~= nil and typeof(val) == "Vector3")
 	return val
 end
@@ -377,7 +382,7 @@ end
 
 --- Constructs a new node at the specified position. 
 function NodeUtil.new(position: Vector3): Node
-	local node: Node = Instance.new("Model")
+	local node: Model = Instance.new("Model")
 	node:SetAttribute("Position", position)
 	node.Name = HttpService:GenerateGUID(false)
 
@@ -393,7 +398,9 @@ function NodeUtil.new(position: Vector3): Node
 	cacheFolder.Name = "Cache"
 	cacheFolder.Parent = node
 
-	return node
+	local finalNode: any = node
+	_setNodeGeneration(finalNode, 0)
+	return finalNode
 end
 
 export type NodeUtil = typeof(NodeUtil)

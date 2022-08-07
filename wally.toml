@@ -1,7 +1,7 @@
 [package]
 name = "nightcycle/node"
 description = "A framework useful for creating hierarchical node networks, as well as performing wave function collapse style procedural generation."
-version = "1.0.0"
+version = "1.0.3"
 authors = ["CJ Oyer <coyer@nightcycle.us>"]
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
